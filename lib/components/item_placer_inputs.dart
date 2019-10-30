@@ -10,11 +10,11 @@ abstract class ItemPlacerInputs {
   /// [itemType] Type of an item to be placed
   /// [point] Coordinates where an item should be placed
   /// [board] Board on which an item should be placed
-  PlacementResult canPlace(BoardItemType itemType, Point point, BoardInputs board);
+  PlacementResult canPlace(BoardItemType itemType, Point<int> point, BoardInputs board);
 
   /// Places an item on a board. Does NOT check if the placement is valid
   /// [itemType] Type of an item to be placed
   /// [point] Coordinates where an item should be placed
   /// [board] Board on which an item should be placed
-  void place(BoardItemType itemType, Point point, BoardInputs board);
+  void place(BoardItemType itemType, Point<int> point, BoardInputs board);
 }

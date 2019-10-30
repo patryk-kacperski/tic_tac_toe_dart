@@ -23,14 +23,14 @@ abstract class GameEngineInputs {
   /// otherwise game state doesn't change and reason of failure is returned
   /// [point] Coordinates of field where an object should be placed
   /// [itemType] Type of object that should be placed
-  PlacementResult attemptToPlaceWithPoint(Point point, BoardItemType itemType);
+  PlacementResult attemptToPlaceWithPoint(Point<int> point, BoardItemType itemType);
 
   /// Returns a set of fields where a new object can be placed
-  Set<Point> findValidFields();
+  Set<Point<int>> findValidFields();
 
   /// Returns a list of fields where player controlling [itemType] can place
   /// an object to instantely win
-  Set<Point> findWinningFields(BoardItemType itemType);
+  Set<Point<int>> findWinningFields(BoardItemType itemType);
 
   /// Returns state of a game
   GameState checkGameState();

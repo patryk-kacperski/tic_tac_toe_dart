@@ -8,11 +8,11 @@ import 'package:tic_tac_toe/enums/board_item_type.dart';
 abstract class FieldsFinderInputs {
   /// Returns set of points that an item can be placed at
   /// [board] Board to examine
-  Set<Point> findValidFields(BoardInputs board);
+  Set<Point<int>> findValidFields(BoardInputs board);
 
   /// Returns set of points that an item can be placed at for player
   /// controlling [itemType] to instantely win
   /// [board] Board to examine
   /// [itemType] Type of items to check
-  Set<Point> findWinningFields(BoardInputs board, BoardItemType itemType);
+  Set<Point<int>> findWinningFields(BoardInputs board, BoardItemType itemType);
 }

@@ -12,20 +12,20 @@ abstract class BoardInputs {
   /// Returns item at given coordinates.
   /// Doest NOT verify if [point] is within board's bounds
   /// [point] Coordinates of item to get
-  BoardItemType getItemAt(Point point);
+  BoardItemType getItemAt(Point<int> point);
 
   /// Places item at coordinates.
   /// Does NOT verify, if [point] is within boards's bounds or if
   /// it is a valid move
   /// [itemType] Type of item to place.
   /// [point] Coordinates of object to place.
-  void setItemAt(BoardItemType itemType, Point point);
+  void setItemAt(BoardItemType itemType, Point<int> point);
 
   /// Checks if given field is in board's bounds
-  bool containts(Point point);
+  bool containts(Point<int> point);
 
   /// Iterates over all fields and performs passed function on each of them
-  void forEach(void Function(Point, BoardItemType) op);
+  void forEach(void Function(Point<int>, BoardItemType) op);
 
   // Computed Properties:
 
