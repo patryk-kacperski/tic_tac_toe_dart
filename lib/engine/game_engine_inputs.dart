@@ -41,7 +41,7 @@ abstract class GameEngineInputs {
   // Computed properties:
 
   /// Returns type of item that current player controlls
-  BoardItemType get currentSide;
+  BoardItemType get currentType;
 
   /// Returns state of a board
   List<List<BoardItemType>> get boardState;
