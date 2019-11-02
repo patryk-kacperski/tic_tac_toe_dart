@@ -25,7 +25,7 @@ class Board implements BoardInputs {
   @override
   void forEach(void Function(Point<int>, BoardItemType) op) {
     for (int x = 0; x < size; ++x) {
-      for (int y = 0; x < size; ++y) {
+      for (int y = 0; y < size; ++y) {
         final point = Point(x, y);
         final itemType = getItemAt(point);
         op(point, itemType);

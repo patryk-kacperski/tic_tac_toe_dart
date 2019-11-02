@@ -6,7 +6,6 @@ import 'package:tic_tac_toe/enums/board_item_type.dart';
 import '../testing_utils/board_utils.dart';
 
 void main() {
-  Point<int> p(int x, int y) => Point(x, y);
   group('Board', () {
     test('.state should return board passed in constructor', () {
       final expected = createFieldsEmpty();

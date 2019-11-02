@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:tic_tac_toe/components/board.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 
 const _ = BoardItemType.none;
 const o = BoardItemType.circle;
 const x = BoardItemType.cross;
+
+Point<int> p(int x, int y) => Point(x, y);
 
 List<List<BoardItemType>> createFieldsEmpty() {
   return [

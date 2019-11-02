@@ -7,7 +7,7 @@ import 'package:tic_tac_toe/enums/board_item_type.dart';
 class FieldsFinder implements FieldsFinderInputs {
   @override
   Set<Point<int>> findValidFields(BoardInputs board) {
-    Set<Point<int>> validFields;
+    Set<Point<int>> validFields = Set();
     board.forEach((point, itemType) {
       if (itemType == BoardItemType.none) {
         validFields.add(point);
@@ -18,7 +18,7 @@ class FieldsFinder implements FieldsFinderInputs {
 
   @override
   Set<Point<int>> findWinningFields(BoardInputs board, BoardItemType itemType) {
-    Set<Point<int>> winningFields;
+    Set<Point<int>> winningFields = Set();
     board.forEach((point, currentItemType) {
       if (currentItemType != BoardItemType.none) {
         return;
@@ -42,8 +42,8 @@ class FieldsFinder implements FieldsFinderInputs {
       board,
       point,
       itemType,
-      increase: (p) => Point(p.x + 1, p.y),
-      decrease: (p) => Point(p.x - 1, p.y),
+      increase: (p) => Point<int>(p.x + 1, p.y),
+      decrease: (p) => Point<int>(p.x - 1, p.y),
     );
   }
 
@@ -56,8 +56,8 @@ class FieldsFinder implements FieldsFinderInputs {
       board,
       point,
       itemType,
-      increase: (p) => Point(p.x, p.y + 1),
-      decrease: (p) => Point(p.x, p.y - 1),
+      increase: (p) => Point<int>(p.x, p.y + 1),
+      decrease: (p) => Point<int>(p.x, p.y - 1),
     );
   }
 
@@ -70,8 +70,8 @@ class FieldsFinder implements FieldsFinderInputs {
       board,
       point,
       itemType,
-      increase: (p) => Point(p.x + 1, p.y + 1),
-      decrease: (p) => Point(p.x - 1, p.y - 1),
+      increase: (p) => Point<int>(p.x + 1, p.y + 1),
+      decrease: (p) => Point<int>(p.x - 1, p.y - 1),
     );
   }
 
@@ -84,8 +84,8 @@ class FieldsFinder implements FieldsFinderInputs {
       board,
       point,
       itemType,
-      increase: (p) => Point(p.x - 1, p.y + 1),
-      decrease: (p) => Point(p.x + 1, p.y - 1),
+      increase: (p) => Point<int>(p.x - 1, p.y + 1),
+      decrease: (p) => Point<int>(p.x + 1, p.y - 1),
     );
   }
 
@@ -93,11 +93,11 @@ class FieldsFinder implements FieldsFinderInputs {
     BoardInputs board,
     Point<int> point,
     BoardItemType itemType, {
-    Point Function(Point) increase,
-    Point Function(Point) decrease,
+    Point Function(Point<int>) increase,
+    Point Function(Point<int>) decrease,
   }) {
-    Point next = increase(point);
-    Point previous = decrease(point);
+    Point<int> next = increase(point);
+    Point<int> previous = decrease(point);
     int count = 0;
 
     while (board.containts(next) && board.getItemAt(next) == itemType) {
@@ -109,6 +109,6 @@ class FieldsFinder implements FieldsFinderInputs {
       previous = decrease(previous);
     }
 
-    return count == board.numberOfElementsToWin;
+    return count == board.numberOfElementsToWin - 1;
   }
 }
