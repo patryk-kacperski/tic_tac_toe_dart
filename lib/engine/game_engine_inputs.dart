@@ -19,21 +19,17 @@ abstract class GameEngineInputs {
   PlacementResult attemptToPlaceWithRawCoords(
       int x, int y, BoardItemType itemType);
 
-  /// Tries to place an object on board. If placement is valid, it's performed,
+  /// Tries to place an item on board. If placement is valid, it's performed,
   /// otherwise game state doesn't change and reason of failure is returned
-  /// [point] Coordinates of field where an object should be placed
-  /// [itemType] Type of object that should be placed
+  /// [point] Coordinates of field where an item should be placed
+  /// [itemType] Type of item that should be placed
   PlacementResult attemptToPlaceWithPoint(Point<int> point, BoardItemType itemType);
 
-  /// Returns a set of fields where a new object can be placed
+  /// Returns a set of fields where a new item can be placed
   Set<Point<int>> findValidFields();
 
-  /// Returns a list of fields where player controlling [itemType] can place
-  /// an object to instantely win
-  Set<Point<int>> findWinningFields(BoardItemType itemType);
-
-  /// Returns state of a game
-  GameState checkGameState();
+  /// Returns a list of fields where current player can place an item to instantely win
+  Set<Point<int>> findWinningFields();
 
   /// TODO
   String saveState();
@@ -48,4 +44,7 @@ abstract class GameEngineInputs {
 
   /// Returns size of a board
   int get boardSize;
+
+  /// Returns state of the game
+  GameState get gameState;
 }

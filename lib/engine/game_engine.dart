@@ -12,6 +12,7 @@ import 'package:tic_tac_toe/engine/game_engine_inputs.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/game_state.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
+import 'package:tic_tac_toe/util/errors.dart';
 
 class GameEngine implements GameEngineInputs {
   // Private constant fields:
@@ -21,12 +22,14 @@ class GameEngine implements GameEngineInputs {
   final ItemPlacerInputs _itemPlacer;
   final void Function(List<List<BoardItemType>>) _onBoardStateChange;
   final void Function(GameState) _onGameStateChange;
-  final void Function(Set<Point>) _onValidPlacementFieldsChange;
-  final void Function(Set<Point>) _onWinningPlacementFieldsChange;
+  final void Function(Set<Point<int>>) _onValidPlacementFieldsChange;
+  final void Function(Set<Point<int>>) _onWinningPlacementFieldsChange;
 
   // Private fields:
   BoardItemType _currentType;
   GameState _currentGameState;
+  Set<Point<int>> _currentValidFields;
+  Set<Point<int>> _currentWinningFields;
 
   // Computed properties:
   @override
@@ -37,6 +40,9 @@ class GameEngine implements GameEngineInputs {
 
   @override
   BoardItemType get currentType => _currentType;
+
+  @override
+  GameState get gameState => _currentGameState;
 
   // Constructors:
   GameEngine._(
@@ -50,8 +56,22 @@ class GameEngine implements GameEngineInputs {
     this._onWinningPlacementFieldsChange,
     this._currentType,
     this._currentGameState,
+    this._currentValidFields,
+    this._currentWinningFields,
   );
 
+  /// Creates engine for default Tic Tac Toe game with 3x3 board and 3 fields of the
+  /// same type required next to each other to win
+  /// [currentType] Item type that will have first move
+  /// [onBoardStateChange] This is called whenever state of the board is changed.
+  /// It has one parameter which is current state of the board
+  /// [onGameStateChange] This is called whenever game state is changed.
+  /// It has one parameter which is current state of the game
+  /// [onValidPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// [onWinningPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// to win immediately
   factory GameEngine.classic({
     BoardItemType currentType = BoardItemType.circle,
     void Function(List<List<BoardItemType>>) onBoardStateChange,
@@ -65,10 +85,12 @@ class GameEngine implements GameEngineInputs {
       [_, _, _],
       [_, _, _],
     ];
+    final finder = FieldsFinder();
+    final board = Board(classicBoard, 3);
     return GameEngine._(
-      Board(classicBoard, 3),
+      board,
       GameStateInspector(),
-      FieldsFinder(),
+      finder,
       ItemPlacer(),
       onBoardStateChange,
       onGameStateChange,
@@ -76,9 +98,25 @@ class GameEngine implements GameEngineInputs {
       onWinningPlacementFieldsChange,
       currentType,
       GameState.ongoing,
+      finder.findValidFields(board),
+      finder.findWinningFields(board, currentType),
     );
   }
 
+  /// Creates engine for custom game of Tic Tac Toe
+  /// [size] Length of the side of a square board
+  /// [numberOfElementsToWin] Number of items that must be placed next to each other in
+  /// order to win. It must not be greater than [size]
+  /// [currentType] Item type that will have first move
+  /// [onBoardStateChange] This is called whenever state of the board is changed.
+  /// It has one parameter which is current state of the board
+  /// [onGameStateChange] This is called whenever game state is changed.
+  /// It has one parameter which is current state of the game
+  /// [onValidPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// [onWinningPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// to win immediately
   factory GameEngine.custom({
     int size = 3,
     int numberOfElementsToWin = 3,
@@ -88,6 +126,12 @@ class GameEngine implements GameEngineInputs {
     void Function(Set<Point>) onValidPlacementFieldsChange,
     void Function(Set<Point>) onWinningPlacementFieldsChange,
   }) {
+    if (numberOfElementsToWin > size) {
+      throw TicTacToeException(
+        TicTacToeErrors.engineConstructionError,
+        "Number of elements to win can not be greater than size",
+      );
+    }
     final List<List<BoardItemType>> customBoard = List.filled(
       size,
       List.filled(
@@ -95,10 +139,12 @@ class GameEngine implements GameEngineInputs {
         BoardItemType.none,
       ),
     );
+    final board = Board(customBoard, numberOfElementsToWin);
+    final finder = FieldsFinder();
     return GameEngine._(
-      Board(customBoard, numberOfElementsToWin),
+      board,
       GameStateInspector(),
-      FieldsFinder(),
+      finder,
       ItemPlacer(),
       onBoardStateChange,
       onGameStateChange,
@@ -106,6 +152,8 @@ class GameEngine implements GameEngineInputs {
       onWinningPlacementFieldsChange,
       currentType,
       GameState.ongoing,
+      finder.findValidFields(board),
+      finder.findWinningFields(board, currentType),
     );
   }
 
@@ -132,18 +180,13 @@ class GameEngine implements GameEngineInputs {
   }
 
   @override
-  GameState checkGameState() {
-    return _gameStateInspector.checkGameState(_board);
-  }
-
-  @override
   Set<Point<int>> findValidFields() {
-    return _fieldsFinder.findValidFields(_board);
+    return _currentValidFields;
   }
 
   @override
-  Set<Point<int>> findWinningFields(BoardItemType itemType) {
-    return _fieldsFinder.findWinningFields(_board, itemType);
+  Set<Point<int>> findWinningFields() {
+    return _currentWinningFields;
   }
 
   @override
@@ -155,13 +198,16 @@ class GameEngine implements GameEngineInputs {
   // Private methods:
   void _updateGameState() {
     _updateCurrentType();
-    final gameState = checkGameState();
+    final gameState = _checkGameState();
     if (gameState == GameState.ongoing) {
       if (_onValidPlacementFieldsChange != null) {
-        _onValidPlacementFieldsChange(findValidFields());
+        _onValidPlacementFieldsChange(_fieldsFinder.findValidFields(_board));
       }
       if (_onWinningPlacementFieldsChange != null) {
-        _onWinningPlacementFieldsChange(findWinningFields(currentType));
+        _onWinningPlacementFieldsChange(_fieldsFinder.findWinningFields(
+          _board,
+          currentType,
+        ));
       }
     }
     if (gameState != _currentGameState && _onGameStateChange != null) {
@@ -175,9 +221,15 @@ class GameEngine implements GameEngineInputs {
         ? BoardItemType.cross
         : BoardItemType.circle;
   }
+
+  GameState _checkGameState() {
+    return _gameStateInspector.checkGameState(_board);
+  }
 }
 
 // TODO:
 // Unit tests
-// Optimization idea: Keep valid and winning fields as params of this class to avoid having them computed multiple times
-// Then delegate calls may be made on more appropriate times
+// Additional functionalities from TODO
+// Example
+// Readme
+// Release
