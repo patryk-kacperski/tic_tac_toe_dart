@@ -229,6 +229,7 @@ class GameEngine implements GameEngineInputs {
 
 // TODO:
 // Unit tests
+// Check coverage
 // Additional functionalities from TODO
 // Example
 // Readme
