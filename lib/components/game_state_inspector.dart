@@ -28,21 +28,21 @@ class GameStateInspector implements GameStateInspectorInputs {
   @override
   GameState checkGameState(BoardInputs board) {
     // Preparing counters
-    List<_LineCount> horizontalCounts = List.filled(
+    List<_LineCount> horizontalCounts = List.generate(
       board.size,
-      _LineCount.empty(),
+      (_) => _LineCount.empty(),
     );
-    List<_LineCount> verticalCounts = List.filled(
+    List<_LineCount> verticalCounts = List.generate(
       board.size,
-      _LineCount.empty(),
+      (_) => _LineCount.empty(),
     );
-    List<_LineCount> mainDiagonalCounts = List.filled(
-      board.size,
-      _LineCount.empty(),
+    List<_LineCount> mainDiagonalCounts = List.generate(
+      _diagonalCountsSize(board),
+      (_) => _LineCount.empty(),
     );
-    List<_LineCount> minorDiagonalCounts = List.filled(
-      board.size,
-      _LineCount.empty(),
+    List<_LineCount> minorDiagonalCounts = List.generate(
+      _diagonalCountsSize(board),
+      (_) => _LineCount.empty(),
     );
     int emptyFieldsCount = 0;
 
@@ -68,22 +68,28 @@ class GameStateInspector implements GameStateInspectorInputs {
 
         int mainDiagonalIndex =
             point.x - point.y + board.size - board.numberOfElementsToWin;
-        _updateCount(
-          mainDiagonalCounts[mainDiagonalIndex],
-          itemType,
-          board.numberOfElementsToWin,
-        );
+        if (mainDiagonalIndex >= 0 &&
+            mainDiagonalIndex < mainDiagonalCounts.length) {
+          _updateCount(
+            mainDiagonalCounts[mainDiagonalIndex],
+            itemType,
+            board.numberOfElementsToWin,
+          );
+        }
 
         int minorDiagonalIndex = 2 * board.size -
             point.x -
             point.y -
             board.numberOfElementsToWin -
             1;
-        _updateCount(
-          minorDiagonalCounts[minorDiagonalIndex],
-          itemType,
-          board.numberOfElementsToWin,
-        );
+        if (minorDiagonalIndex >= 0 &&
+            minorDiagonalIndex < minorDiagonalCounts.length) {
+          _updateCount(
+            minorDiagonalCounts[minorDiagonalIndex],
+            itemType,
+            board.numberOfElementsToWin,
+          );
+        }
 
         // Counting empty fields to see if there is a tie
         if (itemType == BoardItemType.none) {
@@ -121,6 +127,10 @@ class GameStateInspector implements GameStateInspectorInputs {
     }
 
     return result;
+  }
+
+  int _diagonalCountsSize(BoardInputs board) {
+    return 2 * (board.size - board.numberOfElementsToWin) + 1;
   }
 
   void _updateCount(

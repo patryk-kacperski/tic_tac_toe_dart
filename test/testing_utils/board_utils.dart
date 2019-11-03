@@ -52,6 +52,19 @@ List<List<BoardItemType>> createFieldsMoreThanRequiredToWin() {
     [_, x, x, x, x, x, x, o],
     [_, _, _, _, _, _, o, o],
     [_, _, _, _, _, _, _, o],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsMoreThanRequiredToWinOtherSideWinning() {
+  return [
+    [_, _, _, _, _, _, _, o],
+    [_, x, x, x, x, x, x, o],
+    [_, _, _, _, _, _, o, o],
+    [_, _, _, _, _, _, _, o],
     [_, _, _, _, _, _, _, o],
     [_, _, _, _, _, _, _, _],
     [_, _, _, _, _, _, _, _],
@@ -68,7 +81,7 @@ List<List<BoardItemType>> createFieldsInvalidStateSameAxis() {
     [_, o, x, _, _, _, _, o],
     [_, _, o, _, _, _, _, _],
     [_, _, _, o, _, _, _, _],
-    [_, _, _, _, o, _, _, _]
+    [_, _, _, _, _, _, _, _]
   ];
 }
 
@@ -98,34 +111,191 @@ List<List<BoardItemType>> createFieldsFullLarge() {
   ];
 }
 
+List<List<BoardItemType>> createFieldsCirclesWonMainDiagonalUpperEdge() {
+  return [
+    [_, _, _, o, _, _, _, _],
+    [_, _, _, _, o, _, _, _],
+    [_, _, _, _, _, o, _, _],
+    [_, _, _, _, _, _, o, _],
+    [_, _, _, _, _, _, _, o],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCirclesWonMainDiagonalMiddle() {
+  return [
+    [x, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, o, _, _, _, _, _],
+    [_, _, _, o, _, _, _, _],
+    [_, _, _, _, o, _, _, _],
+    [_, _, _, _, _, o, _, _],
+    [_, _, _, _, _, _, o, _],
+    [_, _, _, _, _, _, _, x]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCirclesWonMainDiagonalLowerEdge() {
+  return [
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [o, _, _, _, _, _, _, _],
+    [_, o, _, _, _, _, _, _],
+    [_, _, o, _, _, _, _, _],
+    [_, _, _, o, _, _, _, _],
+    [_, _, _, _, o, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCrossesWonMinorDiagonalUpperEdge() {
+  return [
+    [_, _, _, _, x, _, _, _],
+    [_, _, _, x, _, _, _, _],
+    [_, _, x, _, _, _, _, _],
+    [_, x, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCrossesWonMinorDiagonalMiddle() {
+  return [
+    [_, _, _, _, _, _, _, o],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, x, _, _],
+    [_, _, _, _, x, _, _, _],
+    [_, _, _, x, _, _, _, _],
+    [_, _, x, _, _, _, _, _],
+    [_, x, _, _, _, _, _, _],
+    [o, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCrossesWonMinorDiagonalLowerEdge() {
+  return [
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, x],
+    [_, _, _, _, _, _, x, _],
+    [_, _, _, _, _, x, _, _],
+    [_, _, _, _, x, _, _, _],
+    [_, _, _, x, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCirclesWonHorizontal() {
+  return [
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [o, x, o, o, o, o, o, x],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCrossesWonVertical() {
+  return [
+    [x, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [x, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
+List<List<BoardItemType>> createFieldsCirclesMultiWin() {
+  return [
+    [o, _, o, _, _, _, o, _],
+    [_, o, o, _, _, o, _, _],
+    [_, _, o, _, o, _, _, _],
+    [o, x, o, o, o, o, o, x],
+    [_, _, o, _, o, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _],
+    [_, _, _, _, _, _, _, _]
+  ];
+}
+
 Board createBoardEmpty() {
-    return Board(createFieldsEmpty(), 3);
+  return Board(createFieldsEmpty(), 3);
 }
 
 Board createBoardFilled() {
-    return Board(createFieldsFilled(), 3);
+  return Board(createFieldsFilled(), 3);
 }
 
 Board createBoardForFieldsFinder() {
-    return Board(createFieldsForFieldsFinder(), 5);
+  return Board(createFieldsForFieldsFinder(), 5);
 }
 
 Board createBoardFull() {
-    return Board(createFieldsFull(), 3);
+  return Board(createFieldsFull(), 3);
 }
 
 Board createBoardMoreThanRequiredToWin() {
-    return Board(createFieldsMoreThanRequiredToWin(), 5);
+  return Board(createFieldsMoreThanRequiredToWin(), 5);
+}
+
+Board createBoardMoreThanRequiredToWinOtherSideWinning() {
+  return Board(createFieldsMoreThanRequiredToWinOtherSideWinning(), 5);
 }
 
 Board createBoardInvalidStateSameAxis() {
-    return Board(createFieldsInvalidStateSameAxis(), 5);
+  return Board(createFieldsInvalidStateSameAxis(), 5);
 }
 
 Board createBoardInvalidStateDifferentAxis() {
-    return Board(createFieldsInvalidStateDifferentAxis(), 5);
+  return Board(createFieldsInvalidStateDifferentAxis(), 5);
 }
 
 Board createBoardFullLarge() {
-    return Board(createFieldsFilled(), 5);
+  return Board(createFieldsFullLarge(), 5);
+}
+
+Board createBoardCirclesWonMainDiagonalUpperEdge() {
+  return Board(createFieldsCirclesWonMainDiagonalUpperEdge(), 5);
+}
+
+Board createBoardCirclesWonMainDiagonalMiddle() {
+  return Board(createFieldsCirclesWonMainDiagonalMiddle(), 5);
+}
+
+Board createBoardCirclesWonMainDiagonalLowerEdge() {
+  return Board(createFieldsCirclesWonMainDiagonalLowerEdge(), 5);
+}
+
+Board createBoardCrossesWonMinorDiagonalUpperEdge() {
+  return Board(createFieldsCrossesWonMinorDiagonalUpperEdge(), 5);
+}
+
+Board createBoardCrossesWonMinorDiagonalMiddle() {
+  return Board(createFieldsCrossesWonMinorDiagonalMiddle(), 5);
+}
+
+Board createBoardCrossesWonMinorDiagonalLowerEdge() {
+  return Board(createFieldsCrossesWonMinorDiagonalLowerEdge(), 5);
+}
+
+Board createBoardCirclesWonHorizontal() {
+  return Board(createFieldsCirclesWonHorizontal(), 5);
+}
+
+Board createBoardCrossesWonVertical() {
+  return Board(createFieldsCrossesWonVertical(), 5);
+}
+
+Board createBoardCirclesMultiWin() {
+  return Board(createFieldsCirclesMultiWin(), 5);
 }

@@ -126,10 +126,22 @@ class GameEngine implements GameEngineInputs {
     void Function(Set<Point>) onValidPlacementFieldsChange,
     void Function(Set<Point>) onWinningPlacementFieldsChange,
   }) {
+    if (size <= 0) {
+      throw TicTacToeException(
+        TicTacToeErrors.engineConstructionError,
+        "Board size must be a positive integer",
+      );
+    }
     if (numberOfElementsToWin > size) {
       throw TicTacToeException(
         TicTacToeErrors.engineConstructionError,
         "Number of elements to win can not be greater than size",
+      );
+    }
+    if (numberOfElementsToWin <= 0) {
+      throw TicTacToeException(
+        TicTacToeErrors.engineConstructionError,
+        "Number of elements to win must be a positive integer",
       );
     }
     final List<List<BoardItemType>> customBoard = List.filled(
