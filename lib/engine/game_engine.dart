@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/components/board.dart';
 import 'package:tic_tac_toe/components/board_inputs.dart';
 import 'package:tic_tac_toe/components/fields_finder.dart';
@@ -44,6 +45,9 @@ class GameEngine implements GameEngineInputs {
   @override
   GameState get gameState => _currentGameState;
 
+  @visibleForTesting
+  Board get board => _board;
+
   // Constructors:
   GameEngine._(
     this._board,
@@ -72,12 +76,21 @@ class GameEngine implements GameEngineInputs {
   /// [onWinningPlacementFieldsChange] This is called whenever a valid move is performed.
   /// It has one parameter which is a set of coordinates where an item can be placed
   /// to win immediately
+  /// [gameStateInspector] Use this field only if you want to pass custom implementation of
+  /// [GameStateInspectorInputs] interface
+  /// [fieldsFinder] Use this field only if you want to pass custom implementation of
+  /// [FieldsFinderInputs] interface
+  /// [itemPlacer] Use this field only if you want to pass custom implementation of
+  /// [ItemPlacerInputs] interface
   factory GameEngine.classic({
     BoardItemType currentType = BoardItemType.circle,
     void Function(List<List<BoardItemType>>) onBoardStateChange,
     void Function(GameState) onGameStateChange,
     void Function(Set<Point>) onValidPlacementFieldsChange,
     void Function(Set<Point>) onWinningPlacementFieldsChange,
+    GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
+    FieldsFinderInputs fieldsFinder = const FieldsFinder(),
+    ItemPlacerInputs itemPlacer = const ItemPlacer(),
   }) {
     final _ = BoardItemType.none;
     final classicBoard = [
@@ -85,21 +98,20 @@ class GameEngine implements GameEngineInputs {
       [_, _, _],
       [_, _, _],
     ];
-    final finder = FieldsFinder();
     final board = Board(classicBoard, 3);
     return GameEngine._(
       board,
-      GameStateInspector(),
-      finder,
-      ItemPlacer(),
+      gameStateInspector,
+      fieldsFinder,
+      itemPlacer,
       onBoardStateChange,
       onGameStateChange,
       onValidPlacementFieldsChange,
       onWinningPlacementFieldsChange,
       currentType,
       GameState.ongoing,
-      finder.findValidFields(board),
-      finder.findWinningFields(board, currentType),
+      fieldsFinder.findValidFields(board),
+      fieldsFinder.findWinningFields(board, currentType),
     );
   }
 
@@ -117,6 +129,12 @@ class GameEngine implements GameEngineInputs {
   /// [onWinningPlacementFieldsChange] This is called whenever a valid move is performed.
   /// It has one parameter which is a set of coordinates where an item can be placed
   /// to win immediately
+  /// [gameStateInspector] Use this field only if you want to pass custom implementation of
+  /// [GameStateInspectorInputs] interface
+  /// [fieldsFinder] Use this field only if you want to pass custom implementation of
+  /// [FieldsFinderInputs] interface
+  /// [itemPlacer] Use this field only if you want to pass custom implementation of
+  /// [ItemPlacerInputs] interface
   factory GameEngine.custom({
     int size = 3,
     int numberOfElementsToWin = 3,
@@ -125,6 +143,9 @@ class GameEngine implements GameEngineInputs {
     void Function(GameState) onGameStateChange,
     void Function(Set<Point>) onValidPlacementFieldsChange,
     void Function(Set<Point>) onWinningPlacementFieldsChange,
+    GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
+    FieldsFinderInputs fieldsFinder = const FieldsFinder(),
+    ItemPlacerInputs itemPlacer = const ItemPlacer(),
   }) {
     if (size <= 0) {
       throw TicTacToeException(
@@ -144,19 +165,18 @@ class GameEngine implements GameEngineInputs {
         "Number of elements to win must be a positive integer",
       );
     }
-    final List<List<BoardItemType>> customBoard = List.filled(
+    final List<List<BoardItemType>> customBoard = List.generate(
       size,
-      List.filled(
+      (_) => List.generate(
         size,
-        BoardItemType.none,
+        (_) => BoardItemType.none,
       ),
     );
     final board = Board(customBoard, numberOfElementsToWin);
-    final finder = FieldsFinder();
     return GameEngine._(
       board,
-      GameStateInspector(),
-      finder,
+      gameStateInspector,
+      fieldsFinder,
       ItemPlacer(),
       onBoardStateChange,
       onGameStateChange,
@@ -164,8 +184,8 @@ class GameEngine implements GameEngineInputs {
       onWinningPlacementFieldsChange,
       currentType,
       GameState.ongoing,
-      finder.findValidFields(board),
-      finder.findWinningFields(board, currentType),
+      fieldsFinder.findValidFields(board),
+      fieldsFinder.findWinningFields(board, currentType),
     );
   }
 
@@ -222,9 +242,11 @@ class GameEngine implements GameEngineInputs {
         ));
       }
     }
-    if (gameState != _currentGameState && _onGameStateChange != null) {
+    if (gameState != _currentGameState) {
       _currentGameState = gameState;
-      _onGameStateChange(gameState);
+      if (_onGameStateChange != null) {
+        _onGameStateChange(gameState);
+      }
     }
   }
 
@@ -240,8 +262,8 @@ class GameEngine implements GameEngineInputs {
 }
 
 // TODO:
-// Unit tests
 // Check coverage
+// Fix for item placer that makes it validate if proper player makes a move
 // Additional functionalities from TODO
 // Example
 // Readme

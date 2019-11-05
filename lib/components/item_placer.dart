@@ -6,6 +6,7 @@ import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
 
 class ItemPlacer implements ItemPlacerInputs {
+  const ItemPlacer();
   @override
   PlacementResult canPlace(
     BoardItemType itemType,

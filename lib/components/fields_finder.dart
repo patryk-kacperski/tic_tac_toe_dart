@@ -5,6 +5,8 @@ import 'package:tic_tac_toe/components/fields_finder_input.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 
 class FieldsFinder implements FieldsFinderInputs {
+  const FieldsFinder();
+
   @override
   Set<Point<int>> findValidFields(BoardInputs board) {
     Set<Point<int>> validFields = Set();

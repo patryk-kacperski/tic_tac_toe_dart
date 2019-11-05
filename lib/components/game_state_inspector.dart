@@ -25,6 +25,8 @@ class _LineCount {
 }
 
 class GameStateInspector implements GameStateInspectorInputs {
+  const GameStateInspector();
+  
   @override
   GameState checkGameState(BoardInputs board) {
     // Preparing counters
