@@ -193,7 +193,7 @@ class GameEngine implements GameEngineInputs {
   @override
   PlacementResult attemptToPlaceWithPoint(
       Point<int> point, BoardItemType itemType) {
-    final result = _itemPlacer.canPlace(itemType, point, _board);
+    final result = _itemPlacer.canPlace(itemType, point, _board, _currentType);
     if (result == PlacementResult.valid) {
       _itemPlacer.place(itemType, point, _board);
       if (_onBoardStateChange != null) {
@@ -262,8 +262,6 @@ class GameEngine implements GameEngineInputs {
 }
 
 // TODO:
-// Check coverage
-// Fix for item placer that makes it validate if proper player makes a move
 // Additional functionalities from TODO
 // Example
 // Readme

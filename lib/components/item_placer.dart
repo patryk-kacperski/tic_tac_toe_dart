@@ -12,6 +12,7 @@ class ItemPlacer implements ItemPlacerInputs {
     BoardItemType itemType,
     Point<int> point,
     BoardInputs board,
+    BoardItemType currentItemType
   ) {
     if (!board.containts(point)) {
       return PlacementResult.outOfBoard;
@@ -21,6 +22,9 @@ class ItemPlacer implements ItemPlacerInputs {
     }
     if (itemType == BoardItemType.none) {
       return PlacementResult.nonePassed;
+    }
+    if (itemType != currentItemType) {
+      return PlacementResult.wrongTypePassed;
     }
     return PlacementResult.valid;
   }

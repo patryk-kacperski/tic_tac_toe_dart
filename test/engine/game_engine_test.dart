@@ -152,7 +152,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.valid);
       final actual = sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -167,7 +167,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.outOfBoard);
       final actual = sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -182,7 +182,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.occupied);
       final actual = sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -197,7 +197,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.nonePassed);
       final actual = sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -210,7 +210,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -223,7 +223,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.outOfBoard);
       sut.attemptToPlaceWithPoint(point, itemType);
 
@@ -241,7 +241,7 @@ void main() {
       final sut = _createMockedEngine(
         onBoardStateChange: (_) => wasCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       sut.attemptToPlaceWithPoint(point, itemType);
       final actual = wasCalled;
@@ -260,7 +260,7 @@ void main() {
       final sut = _createMockedEngine(
         onBoardStateChange: (_) => wasCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.outOfBoard);
       sut.attemptToPlaceWithPoint(point, itemType);
       final actual = wasCalled;
@@ -276,7 +276,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       sut.attemptToPlaceWithPoint(point, itemType);
       final actual = sut.currentType;
@@ -292,7 +292,7 @@ void main() {
       final point = Point<int>(-1, -1);
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.outOfBoard);
       sut.attemptToPlaceWithPoint(point, itemType);
       final actual = sut.currentType;
@@ -315,7 +315,7 @@ void main() {
         onWinningPlacementFieldsChange: (_) =>
             wasOnWinningPlacementFieldsChangeCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.ongoing);
@@ -340,7 +340,7 @@ void main() {
         onWinningPlacementFieldsChange: (_) =>
             wasOnWinningPlacementFieldsChangeCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.crossesWon);
@@ -365,7 +365,7 @@ void main() {
         onWinningPlacementFieldsChange: (_) =>
             wasOnWinningPlacementFieldsChangeCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.nonePassed);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.ongoing);
@@ -386,7 +386,7 @@ void main() {
       final sut = _createMockedEngine(
         onGameStateChange: (_) => wasCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.circlesWon);
@@ -408,7 +408,7 @@ void main() {
       final sut = _createMockedEngine(
         onGameStateChange: (_) => wasCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.valid);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.ongoing);
@@ -430,7 +430,7 @@ void main() {
       final sut = _createMockedEngine(
         onGameStateChange: (_) => wasCalled = true,
       );
-      when(_mockItemPlacer.canPlace(itemType, point, sut.board))
+      when(_mockItemPlacer.canPlace(itemType, point, sut.board, sut.currentType))
           .thenReturn(PlacementResult.nonePassed);
       when(_mockGameStateInspector.checkGameState(sut.board))
           .thenReturn(GameState.circlesWon);
@@ -449,7 +449,7 @@ void main() {
       final x = -1, y = -1;
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.valid);
       final actual = sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -464,7 +464,7 @@ void main() {
       final x = -1, y = -1;
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.outOfBoard);
       final actual = sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -479,7 +479,7 @@ void main() {
       final x = -1, y = -1;
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.occupied);
       final actual = sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -494,7 +494,7 @@ void main() {
       final x = -1, y = -1;
       final itemType = BoardItemType.circle;
       final sut = _createMockedEngine();
-      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+      when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
           .thenAnswer((_) => PlacementResult.nonePassed);
       final actual = sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -508,7 +508,7 @@ void main() {
     final x = -1, y = -1;
     final itemType = BoardItemType.circle;
     final sut = _createMockedEngine();
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -521,7 +521,7 @@ void main() {
     final x = -1, y = -1;
     final itemType = BoardItemType.circle;
     final sut = _createMockedEngine();
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.outOfBoard);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
 
@@ -539,7 +539,7 @@ void main() {
     final sut = _createMockedEngine(
       onBoardStateChange: (_) => wasCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
     final actual = wasCalled;
@@ -558,7 +558,7 @@ void main() {
     final sut = _createMockedEngine(
       onBoardStateChange: (_) => wasCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.outOfBoard);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
     final actual = wasCalled;
@@ -574,7 +574,7 @@ void main() {
     final x = -1, y = -1;
     final itemType = BoardItemType.circle;
     final sut = _createMockedEngine();
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
     final actual = sut.currentType;
@@ -590,7 +590,7 @@ void main() {
     final x = -1, y = -1;
     final itemType = BoardItemType.circle;
     final sut = _createMockedEngine();
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.outOfBoard);
     sut.attemptToPlaceWithRawCoords(x, y, itemType);
     final actual = sut.currentType;
@@ -613,7 +613,7 @@ void main() {
       onWinningPlacementFieldsChange: (_) =>
           wasOnWinningPlacementFieldsChangeCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.ongoing);
@@ -638,7 +638,7 @@ void main() {
       onWinningPlacementFieldsChange: (_) =>
           wasOnWinningPlacementFieldsChangeCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.crossesWon);
@@ -663,7 +663,7 @@ void main() {
       onWinningPlacementFieldsChange: (_) =>
           wasOnWinningPlacementFieldsChangeCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.nonePassed);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.ongoing);
@@ -684,7 +684,7 @@ void main() {
     final sut = _createMockedEngine(
       onGameStateChange: (_) => wasCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.circlesWon);
@@ -706,7 +706,7 @@ void main() {
     final sut = _createMockedEngine(
       onGameStateChange: (_) => wasCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.valid);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.ongoing);
@@ -728,7 +728,7 @@ void main() {
     final sut = _createMockedEngine(
       onGameStateChange: (_) => wasCalled = true,
     );
-    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board))
+    when(_mockItemPlacer.canPlace(itemType, Point(x, y), sut.board, sut.currentType))
         .thenReturn(PlacementResult.nonePassed);
     when(_mockGameStateInspector.checkGameState(sut.board))
         .thenReturn(GameState.circlesWon);

@@ -16,7 +16,8 @@ void main() {
       final point = Point(3, 3);
       final board = createBoardEmpty();
       final sut = ItemPlacer();
-      final actual = sut.canPlace(itemType, point, board);
+      final currentType = BoardItemType.circle;
+      final actual = sut.canPlace(itemType, point, board, currentType);
 
       expect(actual, equals(expected));
     });
@@ -28,7 +29,8 @@ void main() {
       final point = Point(2, 0);
       final board = createBoardFilled();
       final sut = ItemPlacer();
-      final actual = sut.canPlace(itemType, point, board);
+      final currentType = BoardItemType.circle;
+      final actual = sut.canPlace(itemType, point, board, currentType);
 
       expect(actual, equals(expected));
     });
@@ -40,7 +42,21 @@ void main() {
       final point = Point(1, 0);
       final board = createBoardEmpty();
       final sut = ItemPlacer();
-      final actual = sut.canPlace(itemType, point, board);
+      final currentType = BoardItemType.circle;
+      final actual = sut.canPlace(itemType, point, board, currentType);
+
+      expect(actual, equals(expected));
+    });
+
+    test('.canPlace() should return [PlacementResult.wrongTypePassed] when item passed is not the same as current item type', () {
+      final expected = PlacementResult.wrongTypePassed;
+
+      final itemType = BoardItemType.cross;
+      final point = Point(1, 0);
+      final board = createBoardEmpty();
+      final sut = ItemPlacer();
+      final currentType = BoardItemType.circle;
+      final actual = sut.canPlace(itemType, point, board, currentType);
 
       expect(actual, equals(expected));
     });
@@ -52,7 +68,8 @@ void main() {
       final point = Point(1, 0);
       final board = createBoardEmpty();
       final sut = ItemPlacer();
-      final actual = sut.canPlace(itemType, point, board);
+      final currentType = BoardItemType.circle;
+      final actual = sut.canPlace(itemType, point, board, currentType);
 
       expect(actual, equals(expected));
     });

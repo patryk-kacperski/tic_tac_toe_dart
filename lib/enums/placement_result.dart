@@ -12,5 +12,8 @@ enum PlacementResult {
   occupied,
 
   /// Cannot place, because [BoardItemType.none] field type passed
-  nonePassed
+  nonePassed,
+
+  /// Cannot place, because passed [BoardItemType] is different than current [BoardItemType]
+  wrongTypePassed
 }
