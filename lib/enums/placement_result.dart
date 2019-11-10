@@ -15,5 +15,8 @@ enum PlacementResult {
   nonePassed,
 
   /// Cannot place, because passed [BoardItemType] is different than current [BoardItemType]
-  wrongTypePassed
+  wrongTypePassed,
+
+  /// Cannot place, because the game has already finished
+  gameFinished,
 }

@@ -13,6 +13,7 @@ import 'package:tic_tac_toe/engine/game_engine_inputs.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/game_state.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
+import 'package:tic_tac_toe/model/placement.dart';
 import 'package:tic_tac_toe/util/errors.dart';
 
 class GameEngine implements GameEngineInputs {
@@ -31,6 +32,7 @@ class GameEngine implements GameEngineInputs {
   GameState _currentGameState;
   Set<Point<int>> _currentValidFields;
   Set<Point<int>> _currentWinningFields;
+  List<Placement> _placementsLog;
 
   // Computed properties:
   @override
@@ -44,6 +46,10 @@ class GameEngine implements GameEngineInputs {
 
   @override
   GameState get gameState => _currentGameState;
+
+  @override
+  // TODO: implement placementsLog
+  List<Placement> get placementsLog => _placementsLog;
 
   @visibleForTesting
   Board get board => _board;
@@ -62,6 +68,7 @@ class GameEngine implements GameEngineInputs {
     this._currentGameState,
     this._currentValidFields,
     this._currentWinningFields,
+    this._placementsLog,
   );
 
   /// Creates engine for default Tic Tac Toe game with 3x3 board and 3 fields of the
@@ -112,6 +119,7 @@ class GameEngine implements GameEngineInputs {
       GameState.ongoing,
       fieldsFinder.findValidFields(board),
       fieldsFinder.findWinningFields(board, currentType),
+      List(),
     );
   }
 
@@ -186,6 +194,7 @@ class GameEngine implements GameEngineInputs {
       GameState.ongoing,
       fieldsFinder.findValidFields(board),
       fieldsFinder.findWinningFields(board, currentType),
+      List(),
     );
   }
 
@@ -193,9 +202,13 @@ class GameEngine implements GameEngineInputs {
   @override
   PlacementResult attemptToPlaceWithPoint(
       Point<int> point, BoardItemType itemType) {
+    if (_isGameFinished()) {
+      return PlacementResult.gameFinished;
+    }
     final result = _itemPlacer.canPlace(itemType, point, _board, _currentType);
     if (result == PlacementResult.valid) {
       _itemPlacer.place(itemType, point, _board);
+      _placementsLog.add(Placement(itemType: _currentType, point: point));
       if (_onBoardStateChange != null) {
         _onBoardStateChange(_board.state);
       }
@@ -219,6 +232,23 @@ class GameEngine implements GameEngineInputs {
   @override
   Set<Point<int>> findWinningFields() {
     return _currentWinningFields;
+  }
+
+  @override
+  void undoPlacement({int count = 1}) {
+    if (count < 1) {
+      throw TicTacToeException(
+        TicTacToeErrors.undoArgumentError,
+        "[count] can must be greater or equal to one, but passed value is equal to $count",
+      );
+    }
+    if (count > _placementsLog.length) {
+      throw TicTacToeException(
+        TicTacToeErrors.undoArgumentError,
+        "[count] can not be greater that the size of [placementsLog], but passed value is equal to $count, while the size of [placementsLog] is equal to ${placementsLog.length}",
+      );
+    }
+    _itemPlacer.undo(count, _placementsLog, _board);
   }
 
   @override
@@ -259,10 +289,18 @@ class GameEngine implements GameEngineInputs {
   GameState _checkGameState() {
     return _gameStateInspector.checkGameState(_board);
   }
+
+  bool _isGameFinished() {
+    return [GameState.circlesWon, GameState.crossesWon, GameState.tie]
+        .contains(_currentGameState);
+  }
 }
 
 // TODO:
+// Check if game over before move
 // Additional functionalities from TODO
+// End with tie
+// Travis ??
 // Example
 // Readme
 // Release

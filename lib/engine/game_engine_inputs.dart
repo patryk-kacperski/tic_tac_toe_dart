@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/game_state.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
+import 'package:tic_tac_toe/model/placement.dart';
 
 /// Takes in commands and performs actions upon it's state.
 /// When sending commands with coordinates it should be assumed, that
@@ -31,6 +32,11 @@ abstract class GameEngineInputs {
   /// Returns a list of fields where current player can place an item to instantely win
   Set<Point<int>> findWinningFields();
 
+  /// Undoes [count] number of previous placements. If [count] is ommited undoes last 
+  /// placement.
+  /// [count] must not be greater than size of [placementsLog] or else an exception is thrown
+  void undoPlacement({int count});
+
   /// TODO
   String saveState();
 
@@ -47,4 +53,7 @@ abstract class GameEngineInputs {
 
   /// Returns state of the game
   GameState get gameState;
+
+  /// Returns a list of placements made this game
+  List<Placement> get placementsLog;
 }

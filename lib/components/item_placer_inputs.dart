@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:tic_tac_toe/components/board_inputs.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
+import 'package:tic_tac_toe/model/placement.dart';
 
 /// Verifies if a given move is valid and places items on a board
 abstract class ItemPlacerInputs {
@@ -22,4 +23,10 @@ abstract class ItemPlacerInputs {
   /// [point] Coordinates where an item should be placed
   /// [board] Board on which an item should be placed
   void place(BoardItemType itemType, Point<int> point, BoardInputs board);
+
+  /// Undoes [count] number of placements. Does NOT check if there are enough moves in [log]
+  /// [count] Number of placements to undo
+  /// [log] Log of placements made during game
+  /// [board] Board on which the placements have been made
+  void undo(int count, List<Placement> log, BoardInputs board);
 }

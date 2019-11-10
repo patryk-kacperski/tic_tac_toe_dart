@@ -25,6 +25,14 @@ List<List<BoardItemType>> createFieldsFilled() {
   ];
 }
 
+List<List<BoardItemType>> createFieldsFilledAfterUndo() {
+  return [
+    [_, _, o],
+    [_, _, _],
+    [_, _, _],
+  ];
+}
+
 List<List<BoardItemType>> createFieldsForFieldsFinder() {
   return [
     [_, _, _, _, _, _, _, _],
@@ -234,6 +242,10 @@ Board createBoardEmpty() {
 
 Board createBoardFilled() {
   return Board(createFieldsFilled(), 3);
+}
+
+Board createBoardFilledAfterUndo() {
+  return Board(createFieldsFilledAfterUndo(), 3);
 }
 
 Board createBoardForFieldsFinder() {
