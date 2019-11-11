@@ -39,6 +39,9 @@ class GameEngine implements GameEngineInputs {
   int get boardSize => _board.size;
 
   @override
+  int get numberOfElementsToWin => _board.numberOfElementsToWin;
+
+  @override
   List<List<BoardItemType>> get boardState => _board.state;
 
   @override
@@ -249,6 +252,8 @@ class GameEngine implements GameEngineInputs {
       );
     }
     _itemPlacer.undo(count, _placementsLog, _board);
+    final type = count % 2 == 0 ? _currentType : _nextType();
+    _updateGameState(type: type);
   }
 
   @override
@@ -258,18 +263,23 @@ class GameEngine implements GameEngineInputs {
   }
 
   // Private methods:
-  void _updateGameState() {
-    _updateCurrentType();
+  void _updateGameState({BoardItemType type}) {
+    _updateCurrentType(type);
     final gameState = _checkGameState();
     if (gameState == GameState.ongoing) {
+      final validFields = _fieldsFinder.findValidFields(_board);
+      _currentValidFields = validFields;
       if (_onValidPlacementFieldsChange != null) {
-        _onValidPlacementFieldsChange(_fieldsFinder.findValidFields(_board));
+        _onValidPlacementFieldsChange(validFields);
       }
+
+      final winningFields = _fieldsFinder.findWinningFields(
+        _board,
+        currentType,
+      );
+      _currentWinningFields = winningFields;
       if (_onWinningPlacementFieldsChange != null) {
-        _onWinningPlacementFieldsChange(_fieldsFinder.findWinningFields(
-          _board,
-          currentType,
-        ));
+        _onWinningPlacementFieldsChange(winningFields);
       }
     }
     if (gameState != _currentGameState) {
@@ -280,8 +290,12 @@ class GameEngine implements GameEngineInputs {
     }
   }
 
-  void _updateCurrentType() {
-    _currentType = _currentType == BoardItemType.circle
+  void _updateCurrentType(BoardItemType type) {
+    _currentType = type ?? _nextType();
+  }
+
+  BoardItemType _nextType() {
+    return _currentType == BoardItemType.circle
         ? BoardItemType.cross
         : BoardItemType.circle;
   }
@@ -297,9 +311,14 @@ class GameEngine implements GameEngineInputs {
 }
 
 // TODO:
-// Check if game over before move
-// Additional functionalities from TODO
+// Deserialize logic
+// Deserialize tests
+// Start with filled board
+// Start with filled board tests
 // End with tie
+// End with tie tests
+// Return invalid when wrong number of items of each type are on the board
+// Return invalid when wrong number of items of each type are on the board tests
 // Travis ??
 // Example
 // Readme

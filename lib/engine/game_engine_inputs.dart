@@ -51,6 +51,9 @@ abstract class GameEngineInputs {
   /// Returns size of a board
   int get boardSize;
 
+  /// Returns number of elements that must be placed next to each other to win the game
+  int get numberOfElementsToWin;
+
   /// Returns state of the game
   GameState get gameState;
 
