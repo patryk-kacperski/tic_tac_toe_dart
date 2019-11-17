@@ -37,7 +37,7 @@ abstract class GameEngineInputs {
   /// [count] must not be greater than size of [placementsLog] or else an exception is thrown
   void undoPlacement({int count});
 
-  /// TODO
+  /// Serializes current state of the game to a JSON string, that can be save to load game later
   String saveState();
 
   // Computed properties:

@@ -1,1 +1,1 @@
-const String jsonSerializationVersion = "1";
+const String jsonSerializationVersion = "1.0";

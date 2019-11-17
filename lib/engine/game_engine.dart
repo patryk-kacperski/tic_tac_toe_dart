@@ -1,3 +1,6 @@
+library tic_tac_toe_engine;
+
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -5,6 +8,9 @@ import 'package:tic_tac_toe/components/board.dart';
 import 'package:tic_tac_toe/components/board_inputs.dart';
 import 'package:tic_tac_toe/components/fields_finder.dart';
 import 'package:tic_tac_toe/components/fields_finder_input.dart';
+import 'package:tic_tac_toe/components/game_engine_serializer_inputs.dart';
+import 'package:tic_tac_toe/model/game_engine_dto.dart';
+import 'package:tic_tac_toe/util/constants.dart';
 import 'package:tic_tac_toe/components/game_state_inspector.dart';
 import 'package:tic_tac_toe/components/game_state_inspector_inputs.dart';
 import 'package:tic_tac_toe/components/item_placer.dart';
@@ -15,6 +21,8 @@ import 'package:tic_tac_toe/enums/game_state.dart';
 import 'package:tic_tac_toe/enums/placement_result.dart';
 import 'package:tic_tac_toe/model/placement.dart';
 import 'package:tic_tac_toe/util/errors.dart';
+
+part 'package:tic_tac_toe/components/game_engine_serializer.dart';
 
 class GameEngine implements GameEngineInputs {
   // Private constant fields:
@@ -51,7 +59,6 @@ class GameEngine implements GameEngineInputs {
   GameState get gameState => _currentGameState;
 
   @override
-  // TODO: implement placementsLog
   List<Placement> get placementsLog => _placementsLog;
 
   @visibleForTesting
@@ -148,6 +155,7 @@ class GameEngine implements GameEngineInputs {
   /// [ItemPlacerInputs] interface
   factory GameEngine.custom({
     int size = 3,
+    List<List<BoardItemType>> fields,
     int numberOfElementsToWin = 3,
     BoardItemType currentType = BoardItemType.circle,
     void Function(List<List<BoardItemType>>) onBoardStateChange,
@@ -199,6 +207,37 @@ class GameEngine implements GameEngineInputs {
       fieldsFinder.findWinningFields(board, currentType),
       List(),
     );
+  }
+
+  /// Loads engine for previously saved state
+  /// [json] JSON string received from [saveState] method
+  /// [onBoardStateChange] This is called whenever state of the board is changed.
+  /// It has one parameter which is current state of the board
+  /// [onGameStateChange] This is called whenever game state is changed.
+  /// It has one parameter which is current state of the game
+  /// [onValidPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// [onWinningPlacementFieldsChange] This is called whenever a valid move is performed.
+  /// It has one parameter which is a set of coordinates where an item can be placed
+  /// to win immediately
+  /// [gameStateInspector] Use this field only if you want to pass custom implementation of
+  /// [GameStateInspectorInputs] interface
+  /// [fieldsFinder] Use this field only if you want to pass custom implementation of
+  /// [FieldsFinderInputs] interface
+  /// [itemPlacer] Use this field only if you want to pass custom implementation of
+  /// [ItemPlacerInputs] interface
+  factory GameEngine.load(
+    String json, {
+    void Function(List<List<BoardItemType>>) onBoardStateChange,
+    void Function(GameState) onGameStateChange,
+    void Function(Set<Point>) onValidPlacementFieldsChange,
+    void Function(Set<Point>) onWinningPlacementFieldsChange,
+    GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
+    FieldsFinderInputs fieldsFinder = const FieldsFinder(),
+    ItemPlacerInputs itemPlacer = const ItemPlacer(),
+  }) {
+    final serializer = GameEngineSerializer();
+    return serializer.deserialize(json);
   }
 
   // Public Methods:
@@ -258,8 +297,8 @@ class GameEngine implements GameEngineInputs {
 
   @override
   String saveState() {
-    // TODO: implement saveState
-    return null;
+    final serializer = GameEngineSerializer();
+    return serializer.serialize(this);
   }
 
   // Private methods:
@@ -311,14 +350,6 @@ class GameEngine implements GameEngineInputs {
 }
 
 // TODO:
-// Deserialize logic
-// Deserialize tests
-// Start with filled board
-// Start with filled board tests
-// End with tie
-// End with tie tests
-// Return invalid when wrong number of items of each type are on the board
-// Return invalid when wrong number of items of each type are on the board tests
 // Travis ??
 // Example
 // Readme

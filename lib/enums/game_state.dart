@@ -15,3 +15,6 @@ enum GameState {
   /// Game is not valid (for example both players are winning)
   invalid
 }
+
+GameState gameStateFromString(String str) =>
+    GameState.values.firstWhere((e) => e.toString() == str);

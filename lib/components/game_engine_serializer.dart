@@ -1,18 +1,47 @@
-import 'dart:math';
-
-import 'package:tic_tac_toe/components/game_engine_serializer_inputs.dart';
-import 'package:tic_tac_toe/engine/game_engine_inputs.dart';
-import 'package:tic_tac_toe/model/game_engine_dto.dart';
-import 'package:tic_tac_toe/model/placement.dart';
-import 'package:tic_tac_toe/util/constants.dart';
+part of tic_tac_toe_engine;
 
 class GameEngineSerializer implements GameEngineSerializerInputs {
   @override
-  GameEngineInputs deserialize(String gameEngineJson) {
-    // remember to check file's version if it's correct
-    // enum from string Fruit f = Fruit.values.firstWhere((e) => e.toString() == 'Fruit.' + str);
-    // TODO: implement deserialize
-    return null;
+  GameEngineInputs deserialize(
+    String gameEngineJson, {
+    void Function(List<List<BoardItemType>>) onBoardStateChange,
+    void Function(GameState) onGameStateChange,
+    void Function(Set<Point>) onValidPlacementFieldsChange,
+    void Function(Set<Point>) onWinningPlacementFieldsChange,
+    GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
+    FieldsFinderInputs fieldsFinder = const FieldsFinder(),
+    ItemPlacerInputs itemPlacer = const ItemPlacer(),
+  }) {
+    final Map<String, dynamic> jsonMap = json.decode(gameEngineJson);
+    if (jsonMap["version"] == null ||
+        jsonMap["version"] != jsonSerializationVersion) {
+      throw TicTacToeException(
+        TicTacToeErrors.parsingError,
+        "Invalid version of passed json",
+      );
+    }
+    final engineDto = GameEngineDto.fromJson(jsonMap);
+    if (!_validate(engineDto)) {
+      throw TicTacToeException(
+        TicTacToeErrors.parsingError,
+        "Invalid json passed, one of fields contains null",
+      );
+    }
+    return GameEngine._(
+      Board(engineDto.board.fields, engineDto.board.numberOfElementsToWin),
+      gameStateInspector,
+      fieldsFinder,
+      itemPlacer,
+      onBoardStateChange,
+      onGameStateChange,
+      onValidPlacementFieldsChange,
+      onWinningPlacementFieldsChange,
+      engineDto.currentType,
+      gameStateFromString(engineDto.currentGameState),
+      _mapCurrentFields(engineDto.currentValidFields),
+      _mapCurrentFields(engineDto.currentWinningFields),
+      _mapPlacementsLog(engineDto.placementsLog),
+    );
   }
 
   @override
@@ -43,14 +72,40 @@ class GameEngineSerializer implements GameEngineSerializerInputs {
   }
 
   List<PlacementsLog> _mapPlacementsList(List<Placement> log) {
-    return log.map(
-      (placement) => PlacementsLog(
-        itemType: placement.itemType,
-        point: CurrentValidField(
-          x: placement.point.x,
-          y: placement.point.y,
-        ),
-      ),
-    ).toList();
+    return log
+        .map(
+          (placement) => PlacementsLog(
+            itemType: placement.itemType,
+            point: CurrentValidField(
+              x: placement.point.x,
+              y: placement.point.y,
+            ),
+          ),
+        )
+        .toList();
+  }
+
+  Set<Point<int>> _mapCurrentFields(List<CurrentValidField> fields) {
+    return fields.map((point) => Point<int>(point.x, point.y)).toSet();
+  }
+
+  List<Placement> _mapPlacementsLog(List<PlacementsLog> log) {
+    return log
+        .map((placement) => Placement(
+            itemType: placement.itemType,
+            point: Point<int>(placement.point.x, placement.point.y)))
+        .toList();
+  }
+
+  bool _validate(GameEngineDto dto) {
+    return !(dto.version == null ||
+        dto.board == null ||
+        dto.board.fields == null ||
+        dto.board.numberOfElementsToWin == null ||
+        dto.currentType == null ||
+        dto.currentGameState == null ||
+        dto.currentValidFields == null ||
+        dto.currentWinningFields == null ||
+        dto.placementsLog == null);
   }
 }

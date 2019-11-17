@@ -1,6 +1,7 @@
 enum TicTacToeErrors {
   engineConstructionError,
-  undoArgumentError
+  undoArgumentError,
+  parsingError
 }
 
 class TicTacToeException implements Exception {
