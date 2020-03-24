@@ -353,4 +353,6 @@ class GameEngine implements GameEngineInputs {
 // Travis ??
 // Example
 // Readme
+// Licence to each file
+// Remove calculator default examples
 // Release
