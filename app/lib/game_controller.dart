@@ -15,10 +15,14 @@ class GameController {
   final void Function(GameState) onGameStateChange;
   final void Function(Set<Point<int>>) onValidPlacementFieldsChange;
   final void Function(Set<Point<int>>) onWinningPlacementFieldsChange;
+  final void Function(String, String) displayAlert;
 
-  final GameEngineInputs _gameEngine;
+  GameEngineInputs _gameEngine;
 
   List<List<BoardItemType>> get boardState => _gameEngine.boardState;
+
+  Set<Point<int>> get validFields => _gameEngine.findValidFields();
+  Set<Point<int>> get winningFields => _gameEngine.findWinningFields();
 
   GameController({
     this.size,
@@ -27,6 +31,7 @@ class GameController {
     this.onGameStateChange,
     this.onValidPlacementFieldsChange,
     this.onWinningPlacementFieldsChange,
+    this.displayAlert,
   }) : _gameEngine = GameEngine.custom(
           size: size,
           numberOfElementsToWin: numberOfElementsToWin,
@@ -42,21 +47,39 @@ class GameController {
       case PlacementResult.valid:
         break;
       case PlacementResult.outOfBoard:
-        // Display alert
+        displayAlert("Error", "Move out of bounds");
         break;
       case PlacementResult.nonePassed:
+        displayAlert("Error", "No type passed");
+        break;
       case PlacementResult.occupied:
-        _shakeScreen();
+        displayAlert("Error", "You can't place an item on an occupied field");
         break;
       case PlacementResult.wrongTypePassed:
-        // Display alert
+        displayAlert("Error", "Wrong type passed");
         break;
       case PlacementResult.gameFinished:
-        // Display alert
+        displayAlert("Game finished", "Game has ended, restart or start new one");
         break;
     }
   }
 
+  void restart() {
+    _gameEngine = GameEngine.custom(
+      size: size,
+      numberOfElementsToWin: numberOfElementsToWin,
+      onBoardStateChange: onBoardStateChange,
+      onGameStateChange: onGameStateChange,
+      onValidPlacementFieldsChange: onValidPlacementFieldsChange,
+      onWinningPlacementFieldsChange: onWinningPlacementFieldsChange,
+    );
+  }
+
+  void undo() {
+    _gameEngine.undoPlacement();
+  }
+
+  // PRIVATE METHODS
   void _shakeScreen() {
     // Maybe one day xD
   }
