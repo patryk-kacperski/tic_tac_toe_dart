@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:example_mobile/game_controller.dart';
+import 'package:example_mobile/pages/board/game_controller.dart';
+import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/game_state.dart';
@@ -73,7 +74,6 @@ class _BoardPageState extends State<BoardPage> {
   bool _shouldDisplayWinningFields = false;
 
   GameController controller;
-  // List<List<BoardItemType>> boardState;
 
   Set<Point<int>> _validFields;
   Set<Point<int>> _winningFields;
@@ -107,7 +107,7 @@ class _BoardPageState extends State<BoardPage> {
     final aspectRatio = 1.0;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Game"),
+          title: Text(_getTitle()),
           actions: <Widget>[
             PopupMenuButton<_MenuOptions>(
               onSelected: _onSelected,
@@ -122,32 +122,35 @@ class _BoardPageState extends State<BoardPage> {
             )
           ],
         ),
-        body: Center(
-          child: GridView.count(
-            crossAxisCount: size,
-            childAspectRatio: aspectRatio,
-            primary: true,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            children: List.generate(
-              size * size,
-              (index) {
-                final row = index ~/ size;
-                final column = index % size;
-                return Material(
-                  child: InkWell(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        color: _colorForFieldAt(x: column, y: row),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Center(
+            child: GridView.count(
+              crossAxisCount: size,
+              childAspectRatio: aspectRatio,
+              primary: true,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: List.generate(
+                size * size,
+                (index) {
+                  final row = index ~/ size;
+                  final column = index % size;
+                  return Material(
+                    child: InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          color: _colorForFieldAt(x: column, y: row),
+                        ),
                       ),
+                      onTap: () {
+                        controller.onFieldTapped(x: column, y: row);
+                      },
                     ),
-                    onTap: () {
-                      controller.onFieldTapped(x: column, y: row);
-                    },
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ));
@@ -176,11 +179,23 @@ class _BoardPageState extends State<BoardPage> {
       case BoardItemType.cross:
         return Colors.red;
       case BoardItemType.circle:
-        return Colors.green;
+        return Color(SharedPreferencesUtil.instance.color) ?? Colors.green;
       case BoardItemType.none:
         return Colors.white;
     }
     return Colors.white;
+  }
+
+  String _getTitle() {
+    String playerName = "";
+    if (controller.currentItemType == BoardItemType.circle) {
+      playerName += SharedPreferencesUtil.instance.displayName == null
+          ? "Player 1"
+          : SharedPreferencesUtil.instance.displayName;
+    } else {
+      playerName += "Player 2";
+    }
+    return "Current Player: $playerName";
   }
 
   void _onGameStateChange(GameState state) async {
@@ -226,7 +241,7 @@ class _BoardPageState extends State<BoardPage> {
         break;
       case _MenuOptions.undo:
         setState(() {
-          controller.undo();  
+          controller.undo();
         });
         break;
     }

@@ -23,6 +23,7 @@ class GameController {
 
   Set<Point<int>> get validFields => _gameEngine.findValidFields();
   Set<Point<int>> get winningFields => _gameEngine.findWinningFields();
+  BoardItemType get currentItemType => _gameEngine.currentType;
 
   GameController({
     this.size,

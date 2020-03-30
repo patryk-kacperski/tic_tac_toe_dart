@@ -1,9 +1,28 @@
-import 'package:example_mobile/board_page.dart';
+import 'package:example_mobile/pages/board/board_page.dart';
+import 'package:example_mobile/pages/launch/data_page.dart';
+import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesUtil.initialize();
+  final initialPage = _getInitailPage();
+  runApp(MyApp(initialPage: initialPage));
+}
+
+Widget _getInitailPage() {
+  if (SharedPreferencesUtil.instance.isNameSet) {
+    return BoardPage();
+  } else {
+    return DataPage();
+  }
+}
 
 class MyApp extends StatelessWidget {
+  final Widget initialPage;
+
+  const MyApp({Key key, this.initialPage}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BoardPage(),
+      home: initialPage,
     );
   }
 }
