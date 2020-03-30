@@ -1,5 +1,5 @@
-import 'package:example_mobile/pages/board/board_page.dart';
 import 'package:example_mobile/pages/launch/data_page.dart';
+import 'package:example_mobile/pages/menu/start_page.dart';
 import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ void main() async {
 
 Widget _getInitailPage() {
   if (SharedPreferencesUtil.instance.isNameSet) {
-    return BoardPage();
+    return StartPage();
   } else {
     return DataPage();
   }
