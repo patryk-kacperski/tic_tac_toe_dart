@@ -14,7 +14,7 @@ Widget _getInitailPage() {
   if (SharedPreferencesUtil.instance.isNameSet) {
     return StartPage();
   } else {
-    return DataPage();
+    return DataPage(behavior: DataPageFinishBehavior.pushStart);
   }
 }
 

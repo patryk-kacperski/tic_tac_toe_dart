@@ -1,10 +1,15 @@
 import 'package:example_mobile/pages/board/board_page.dart';
+import 'package:example_mobile/pages/menu/start_page.dart';
 import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+enum DataPageFinishBehavior { pushStart, pop }
+
 class DataPage extends StatefulWidget {
-  DataPage({Key key}) : super(key: key);
+  final DataPageFinishBehavior behavior;
+
+  DataPage({Key key, this.behavior}) : super(key: key);
 
   @override
   _DataPageState createState() => _DataPageState();
@@ -13,11 +18,23 @@ class DataPage extends StatefulWidget {
 class _DataPageState extends State<DataPage> {
   final TextEditingController _controller = TextEditingController();
 
-  Color currentColor = Colors.blue;
+  Color currentColor;
+
+  @override
+  void initState() {
+    currentColor = SharedPreferencesUtil.instance.color == null
+        ? Colors.blue
+        : Color(SharedPreferencesUtil.instance.color);
+    _controller.text = SharedPreferencesUtil.instance.displayName == null
+        ? ""
+        : SharedPreferencesUtil.instance.displayName;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Settings")),
       body: SafeArea(
         child: Stack(
           children: [
@@ -25,7 +42,7 @@ class _DataPageState extends State<DataPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 64),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
                   Text("Enter your Display Name:"),
                   SizedBox(height: 8.0),
                   TextField(
@@ -71,11 +88,18 @@ class _DataPageState extends State<DataPage> {
   void _setPlayerData(String text, BuildContext context) {
     SharedPreferencesUtil.instance.displayName = text;
     SharedPreferencesUtil.instance.color = currentColor.value;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => BoardPage(),
-      ),
-    );
+    switch (widget.behavior) {
+      case DataPageFinishBehavior.pushStart:
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => StartPage(),
+          ),
+        );
+        break;
+      case DataPageFinishBehavior.pop:
+        Navigator.of(context).pop();
+        break;
+    }
   }
 
   void _showChangeColorDialog() {
