@@ -1,19 +1,24 @@
 import 'dart:math';
 
+import 'package:example_mobile/model/player.dart';
 import 'package:example_mobile/pages/board/game_controller.dart';
+import 'package:example_mobile/pages/menu/start_page.dart';
 import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/enums/board_item_type.dart';
 import 'package:tic_tac_toe/enums/game_state.dart';
 
 class BoardPage extends StatefulWidget {
-  BoardPage({Key key}) : super(key: key);
+  final Player player2;
+  BoardPage({Key key, this.player2}) : super(key: key);
 
   @override
   _BoardPageState createState() => _BoardPageState();
 }
 
 enum _MenuOptions { restart, findValidFields, findWinningFields, undo }
+
+enum _EndGameDialogOptions { restart, returnToMenu }
 
 extension _MenuOptionsExtension on _MenuOptions {
   String get name {
@@ -78,6 +83,10 @@ class _BoardPageState extends State<BoardPage> {
   Set<Point<int>> _validFields;
   Set<Point<int>> _winningFields;
 
+  Player _player1;
+  Map<BoardItemType, Player> _players;
+  _EndGameDialogOptions selectedOption;
+
   @override
   void initState() {
     controller = GameController(
@@ -99,6 +108,15 @@ class _BoardPageState extends State<BoardPage> {
     );
     _validFields = controller.validFields;
     _winningFields = controller.winningFields;
+
+    _player1 = Player(
+      SharedPreferencesUtil.instance.displayName,
+      SharedPreferencesUtil.instance.color,
+    );
+    _players = {
+      BoardItemType.circle: _player1,
+      BoardItemType.cross: widget.player2
+    };
     super.initState();
   }
 
@@ -107,7 +125,10 @@ class _BoardPageState extends State<BoardPage> {
     final aspectRatio = 1.0;
     return Scaffold(
         appBar: AppBar(
-          title: Text(_getTitle()),
+          title: Text(
+            _getTitle(),
+            style: TextStyle(fontSize: 18.0),
+          ),
           actions: <Widget>[
             PopupMenuButton<_MenuOptions>(
               onSelected: _onSelected,
@@ -156,7 +177,7 @@ class _BoardPageState extends State<BoardPage> {
         ));
   }
 
-  Future<void> displayAlert(String title, String message) {
+  Future<void> displayAlert(String title, String message) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -165,8 +186,18 @@ class _BoardPageState extends State<BoardPage> {
             content: Text(message),
             actions: <Widget>[
               FlatButton(
-                child: Text("OK"),
-                onPressed: Navigator.of(context).pop,
+                child: Text("Resart"),
+                onPressed: () {
+                  selectedOption = _EndGameDialogOptions.restart;
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Return"),
+                onPressed: () {
+                  selectedOption = _EndGameDialogOptions.returnToMenu;
+                  Navigator.of(context).pop();
+                },
               )
             ],
           );
@@ -177,9 +208,8 @@ class _BoardPageState extends State<BoardPage> {
   Color _colorForBoardItem(BoardItemType item) {
     switch (item) {
       case BoardItemType.cross:
-        return Colors.red;
       case BoardItemType.circle:
-        return Color(SharedPreferencesUtil.instance.color) ?? Colors.green;
+        return Color(_players[item].color);
       case BoardItemType.none:
         return Colors.white;
     }
@@ -187,15 +217,7 @@ class _BoardPageState extends State<BoardPage> {
   }
 
   String _getTitle() {
-    String playerName = "";
-    if (controller.currentItemType == BoardItemType.circle) {
-      playerName += SharedPreferencesUtil.instance.displayName == null
-          ? "Player 1"
-          : SharedPreferencesUtil.instance.displayName;
-    } else {
-      playerName += "Player 2";
-    }
-    return "Current Player: $playerName";
+    return "Current Player: ${_players[controller.currentItemType].name}";
   }
 
   void _onGameStateChange(GameState state) async {
@@ -204,20 +226,38 @@ class _BoardPageState extends State<BoardPage> {
         break;
       case GameState.crossesWon:
       case GameState.circlesWon:
+        final player = _players[BoardItemType.cross];
+        _onGameFinish("${player.name} won!");
+        break;
       case GameState.tie:
-        final text = state.gameFinishedText;
-        setState(() {
-          _shouldDisplayWinningFields = false;
-          _shouldDisplayWinningFields = false;
-        });
-        await displayAlert("Game finished", text);
-        setState(() {
-          controller.restart();
-        });
+        _onGameFinish("Tie!");
         break;
       case GameState.invalid:
         print("Game state invalid!");
         break;
+    }
+  }
+
+  void _onGameFinish(String text) async {
+    await displayAlert("Game finished", text);
+    if (selectedOption != null) {
+      switch (selectedOption) {
+        case _EndGameDialogOptions.restart:
+          setState(() {
+            _shouldDisplayWinningFields = false;
+            _shouldDisplayWinningFields = false;
+            controller.restart();
+          });
+          break;
+        case _EndGameDialogOptions.returnToMenu:
+          int popCount = 3;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => StartPage()
+            )
+          );
+          break;
+      }
     }
   }
 
@@ -259,3 +299,5 @@ class _BoardPageState extends State<BoardPage> {
     return _colorForBoardItem(item);
   }
 }
+
+// TODO: Fix pushing casue no work good :< Final fixes then try making firebase server

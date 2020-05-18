@@ -1,4 +1,5 @@
 import 'package:example_mobile/pages/launch/data_page.dart';
+import 'package:example_mobile/pages/menu/multiplayer_page.dart';
 import 'package:example_mobile/util/shared_preferences/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -23,24 +24,24 @@ class _StartPageState extends State<StartPage> {
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(
-                  child: Text("Single Player"),
-                  onPressed: () => _displayComingSoonAlert(context),
+                  child: Text("Singleplayer"),
+                  onPressed: () => _displayComingSoonAlert(),
                 ),
               ),
               SizedBox(height: 32.0),
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(
-                  child: Text("Multi Player"),
-                  onPressed: () => _displayComingSoonAlert(context),
+                  child: Text("Multiplayer"),
+                  onPressed: () => _navigateToMultiplayerPage(),
                 ),
               ),
               SizedBox(height: 32.0),
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(
-                  child: Text("Change Data"),
-                  onPressed: () => _navigateToDataPage(context),
+                  child: Text("Settings"),
+                  onPressed: () => _navigateToDataPage(),
                 ),
               ),
             ],
@@ -50,7 +51,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void _displayComingSoonAlert(BuildContext context) {
+  void _displayComingSoonAlert() {
     showDialog(
       context: context,
       child: AlertDialog(
@@ -58,21 +59,30 @@ class _StartPageState extends State<StartPage> {
         actions: <Widget>[
           FlatButton(
             child: Text("OK"),
-            onPressed: () => Navigator.of(context).pop,
+            onPressed: () => Navigator.of(context).pop(),
           )
         ],
       ),
     );
   }
 
-  void _navigateToDataPage(BuildContext context) async {
+  void _navigateToDataPage() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => DataPage(
           behavior: DataPageFinishBehavior.pop,
+          player: DataPagePlayer.player1,
         ),
       ),
     );
     setState(() {});
+  }
+
+  void _navigateToMultiplayerPage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MultiplayerPage(),
+      ),
+    );
   }
 }
