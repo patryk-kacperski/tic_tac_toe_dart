@@ -103,8 +103,8 @@ class GameEngine implements GameEngineInputs {
     BoardItemType currentType = BoardItemType.circle,
     void Function(List<List<BoardItemType>>) onBoardStateChange,
     void Function(GameState) onGameStateChange,
-    void Function(Set<Point>) onValidPlacementFieldsChange,
-    void Function(Set<Point>) onWinningPlacementFieldsChange,
+    void Function(Set<Point<int>>) onValidPlacementFieldsChange,
+    void Function(Set<Point<int>>) onWinningPlacementFieldsChange,
     GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
     FieldsFinderInputs fieldsFinder = const FieldsFinder(),
     ItemPlacerInputs itemPlacer = const ItemPlacer(),
@@ -160,8 +160,8 @@ class GameEngine implements GameEngineInputs {
     BoardItemType currentType = BoardItemType.circle,
     void Function(List<List<BoardItemType>>) onBoardStateChange,
     void Function(GameState) onGameStateChange,
-    void Function(Set<Point>) onValidPlacementFieldsChange,
-    void Function(Set<Point>) onWinningPlacementFieldsChange,
+    void Function(Set<Point<int>>) onValidPlacementFieldsChange,
+    void Function(Set<Point<int>>) onWinningPlacementFieldsChange,
     GameStateInspectorInputs gameStateInspector = const GameStateInspector(),
     FieldsFinderInputs fieldsFinder = const FieldsFinder(),
     ItemPlacerInputs itemPlacer = const ItemPlacer(),
@@ -243,14 +243,15 @@ class GameEngine implements GameEngineInputs {
   // Public Methods:
   @override
   PlacementResult attemptToPlaceWithPoint(
-      Point<int> point, BoardItemType itemType) {
+      Point<int> point, [BoardItemType itemType]) {
     if (_isGameFinished()) {
       return PlacementResult.gameFinished;
     }
-    final result = _itemPlacer.canPlace(itemType, point, _board, _currentType);
+    final type = itemType ?? _currentType;
+    final result = _itemPlacer.canPlace(type, point, _board, _currentType);
     if (result == PlacementResult.valid) {
-      _itemPlacer.place(itemType, point, _board);
-      _placementsLog.add(Placement(itemType: _currentType, point: point));
+      _itemPlacer.place(type, point, _board);
+      _placementsLog.add(Placement(itemType: type, point: point));
       if (_onBoardStateChange != null) {
         _onBoardStateChange(_board.state);
       }
@@ -261,7 +262,7 @@ class GameEngine implements GameEngineInputs {
 
   @override
   PlacementResult attemptToPlaceWithRawCoords(
-      int x, int y, BoardItemType itemType) {
+      int x, int y, [BoardItemType itemType]) {
     final point = Point(x, y);
     return attemptToPlaceWithPoint(point, itemType);
   }
@@ -354,5 +355,4 @@ class GameEngine implements GameEngineInputs {
 // Example
 // Readme
 // Licence to each file
-// Remove calculator default examples
 // Release

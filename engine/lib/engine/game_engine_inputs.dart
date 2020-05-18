@@ -18,13 +18,13 @@ abstract class GameEngineInputs {
   /// [y] Y coordinate of field where an object should be placed
   /// [itemType] Type of object that should be placed
   PlacementResult attemptToPlaceWithRawCoords(
-      int x, int y, BoardItemType itemType);
+      int x, int y, [BoardItemType itemType]);
 
   /// Tries to place an item on board. If placement is valid, it's performed,
   /// otherwise game state doesn't change and reason of failure is returned
   /// [point] Coordinates of field where an item should be placed
   /// [itemType] Type of item that should be placed
-  PlacementResult attemptToPlaceWithPoint(Point<int> point, BoardItemType itemType);
+  PlacementResult attemptToPlaceWithPoint(Point<int> point, [BoardItemType itemType]);
 
   /// Returns a set of fields where a new item can be placed
   Set<Point<int>> findValidFields();

@@ -21,9 +21,3 @@ import 'package:tic_tac_toe/model/game_engine_dto.dart';
 import 'package:tic_tac_toe/model/placement.dart';
 import 'package:tic_tac_toe/util/constants.dart';
 import 'package:tic_tac_toe/util/errors.dart';
-
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
